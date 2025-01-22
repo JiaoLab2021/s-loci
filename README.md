@@ -1,10 +1,9 @@
-# varigraph
+# s-loci
 
-[![GitHub last commit](https://img.shields.io/github/last-commit/JiaoLab2021/varigraph.svg?label=Last%20commit&logo=github&style=flat)](https://github.com/JiaoLab2021/varigraph/releases)
-[![Build Status](https://github.com/JiaoLab2021/varigraph/actions/workflows/ci.yaml/badge.svg)](https://github.com/JiaoLab2021/varigraph/actions)
+[![GitHub last commit](https://img.shields.io/github/last-commit/JiaoLab2021/s-loci.svg?label=Last%20commit&logo=github&style=flat)](https://github.com/JiaoLab2021/s-loci/releases)
 
 ## Introduction
-A fast and resource-efficient genome graph genotyping tool
+Software for S-locus Genotyping in Rutaceae Samples Based on Second-Generation Sequencing Data
 
 ## Requirements
 
@@ -12,17 +11,10 @@ Please note the following requirements before building and running the software:
 
 * `Linux` operating system
 * cmake version `3.12` or higher
-* C++ compiler that supports `C++17` or higher, and the `zlib` library installed (we recommend using GCC version `"7.3.0"` or newer) for building `varigraph`
+* C++ compiler that supports `C++17` or higher, and the `zlib` library installed (we recommend using GCC version `"7.3.0"` or newer) for building `s-loci`
+* `SOAPdenovo-63mer` and `minimap2`
 
 ## Installation
-
-### Install via conda
-
-```shell
-conda create -n varigraph
-conda activate varigraph
-conda install -c duzezhen varigraph
-```
 
 ### Building on Linux
 
@@ -31,71 +23,41 @@ Use the following script to build the software:
 1. First, obtain the source code.
 
 ```shell
-git clone https://github.com/JiaoLab2021/varigraph.git
-cd varigraph
+git clone https://github.com/JiaoLab2021/s-loci.git
+cd s-loci
 ```
 
 2. Next, compile the software and add the current directory to your system's `PATH` environment variable.
 
 ```shell
-cmake ./
-make -j 5
+g++ s-loci.cpp -o s-loci -lpthread -lz -lhts -O2 -std=c++17
 echo 'export PATH="$PATH:'$(pwd)'"' >> ~/.bashrc
 source ~/.bashrc
 ```
 
 ## Usage
 
-### Input Files
-
-* Reference Genome
-* VCF File of Population Variants
-* Sample File:
-
-```shell
-# Sample File
-sample1 sample1.r1.fq.gz sample1.r2.fq.gz
-sample2 sample2.r1.fq.gz sample2.r2.fq.gz
-...
-sampleN sampleN.r1.fq.gz sampleN.r2.fq.gz
-```
-
-Please note that the Sample file must be formatted exactly as shown above, where each sample is listed with its corresponding read files.
-
 ### Running
 
 For convenience, let's assume the following file names for the input:
 
-* `refgenome.fa`
-* `input.vcf.gz`
-* `samples.cfg`
+* `s-locus.fa`
+* `s-rnase.dedup.cds`
 
-`varigraph` runs in two steps: the first step builds the genome graph, and the second step performs the genotyping. Here is the specific code:
-
-**1. Building the Genome Graph:**
+**1. Filter:**
 
 ```shell
-varigraph construct -r refgenome.fa -v input.vcf.gz --save-graph graph.bin
+s-loci kmerfilter -i s-locus.fa -r sample.1.fq.gz -r sample.2.fq.gz -m 0.85 --prefix 0.85
 ```
-
-* Adjustment for Tetraploid Genome:
-   * If your VCF file involves variants from a tetraploid genome, include the `--vcf-ploidy 4` parameter.
 
 **2. Performing Genotyping:**
 
 ```shell
-varigraph genotype --load-graph graph.bin -s samples.cfg --use-depth
+s-loci genotype -t 1 -f s-rnase.dedup.cds -r 0.85.sample.1.fq.gz -r 0.85.sample.2.fq.gz --prefix sample
 ```
 
-* Adjustments for Genotyping:
-   * Homozygous Samples: For homozygous samples, add `-g hom` to improve genotyping accuracy.
-   * Tetraploid Samples: If your samples are tetraploid, adjust the `--sample-ploidy 4` parameter.
-   * Use `--use-depth` for accurate genotyping regardless of ploidy.
+**3. Assembly:**
 
-## Note on GPU Acceleration
-
-* GPU Version: varigraph also has a GPU-enabled version for faster computation if your server is equipped with GPUs.
-
-* Usage:
-   * Use `--gpu` to specify GPU usage. For example, `--gpu 0` uses GPU 0.
-   * Adjust GPU memory usage with `--buffer` parameter. Smaller values consume less GPU memory.
+```shell
+s-loci assembly -i 0.85.sample.1.fq.gz -i 0.85.sample.2.fq.gz --avg_ins 500 -f s-rnase.dedup.cds --prefix sample --SOAPdenovo-63mer /path/SOAPdenovo-63mer --minimap2 /path/minimap2  -t 1
+```

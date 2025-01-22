@@ -224,7 +224,7 @@ namespace genotype{
             }
 
             // Check if the task queue exceeds the threshold, and wait if it exceeds the threshold to prevent loading the data into memory all at once
-            int maxRetries = 120; // 60s
+            int maxRetries = 1200; // 10 minutes
             int retryCount = 0;
             while (pool.get_queue() >= MAX_THREADS_NUM) {
                 if (retryCount >= maxRetries) {
