@@ -104,9 +104,6 @@ int main_genotype(int argc, char** argv) {
 	cerr << "[" << __func__ << "::" << getTime() << "] " << "kmer size: " << kmerLen << endl;
     cerr << "[" << __func__ << "::" << getTime() << "] " << "Haplotype information file: " << inputBaseFile << endl;
 
-    // Reset the number of threads. If it is greater than 1, the code will stagnate.
-    threadsNum = 1;
-
 	// Constructing a haplotype index
     unordered_map<uint64_t, vector<uint64_t> > kmerBaseMap;  // unordered_map<hash, vector<chr/end/strand>>
     unordered_map<uint64_t, tuple<string, uint32_t> > chromosomeIdLenMap;  // map<ID, tuple<chr, length> >

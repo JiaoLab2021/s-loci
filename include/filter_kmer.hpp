@@ -406,8 +406,6 @@ namespace filter_kmer {
                 }
                 passReadInfoFutureVec.clear();
                 vector<future<vector<string> > >().swap(passReadInfoFutureVec);
-
-                malloc_trim(0);	// 0 is for heap memory
             }
 
             if (outStreamVec[0].tellp() >= CACHE_SIZE)  // The cache size is MAX_THREADS_NUM

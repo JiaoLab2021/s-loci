@@ -266,8 +266,6 @@ namespace genotype{
                 }
                 kmerMatMapFutureVec.clear();
                 vector<future<tuple<unordered_map<uint64_t, map<uint32_t, uint32_t> >, unordered_map<uint64_t, uint64_t> > > >().swap(kmerMatMapFutureVec);
-
-                malloc_trim(0);	// 0 is for heap memory
             }
         }
 
@@ -298,9 +296,9 @@ namespace genotype{
             }
             kmerMatMapFutureVec.clear();
             vector<future<tuple<unordered_map<uint64_t, map<uint32_t, uint32_t> >, unordered_map<uint64_t, uint64_t> > > >().swap(kmerMatMapFutureVec);
-
-            malloc_trim(0);	// 0 is for heap memory
         }
+
+        malloc_trim(0);	// 0 is for heap memory
 
         // Shutdown thread pool
         pool.shutdown();

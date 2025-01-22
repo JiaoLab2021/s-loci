@@ -278,8 +278,6 @@ namespace bam2ratio {
             // Freeing up memory
             readCigraMap.clear();
             map<string, alignmentInfo>().swap(readCigraMap);
-            
-            malloc_trim(0);	// 0 is for heap memory
 
             // Check if the task queue exceeds the threshold, and wait if it exceeds the threshold to prevent loading the data into memory all at once
             int maxRetries = 120; // Set the maximum number of retries, for example 120 times (60 seconds)
@@ -307,6 +305,8 @@ namespace bam2ratio {
             sleep(0.5);
             retryCount++;
         }
+
+        malloc_trim(0);	// 0 is for heap memory
 
         // Shutdown thread pool
         pool.shutdown();
