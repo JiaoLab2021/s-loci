@@ -93,6 +93,9 @@ int main_genotype(int argc, char** argv) {
         return 1;
     }
 
+    // Reset the number of threads. If it is greater than 1, the code will stagnate.
+    threadsNum = 1;
+
 	// Determine whether the parameters are correct
 	if (inputBaseFile.empty() || inputReadVec.size() == 0) {
 		cerr << "[" << __func__ << "::" << getTime() << "] " << "Parameter error: -f -r \n\n";

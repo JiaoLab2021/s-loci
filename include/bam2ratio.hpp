@@ -315,7 +315,7 @@ namespace bam2ratio {
         bam_hdr_destroy(bam_header);
         sam_close(bam_in);
 
-        // Êä³ö½á¹û
+        // output
         out_save(outputFileName, outReads);
 
         return 0;
