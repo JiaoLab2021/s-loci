@@ -286,6 +286,7 @@ namespace bam2ratio {
             int retryCount = 0;
             while (pool.get_queue() >= threadsNum*100) {
                 if (retryCount >= maxRetries) {
+                    cerr << "[" << __func__ << "::" << getTime() << "] Task queue exceeded threshold for too long, continuing with execution." << endl;
                     break; // Jump out of the loop and continue to execute the following code
                 }
                 // Check every 0.5 seconds
@@ -299,6 +300,7 @@ namespace bam2ratio {
         int retryCount = 0;
         while (pool.get_queue() > 0) {
             if (retryCount >= maxRetries) {
+                cerr << "[" << __func__ << "::" << getTime() << "] Task queue exceeded threshold for too long, continuing with execution." << endl;
                 break; // Jump out of the loop and continue to execute the following code
             }
             // Check every 0.5 seconds

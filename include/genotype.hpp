@@ -228,6 +228,7 @@ namespace genotype{
             int retryCount = 0;
             while (pool.get_queue() >= MAX_THREADS_NUM) {
                 if (retryCount >= maxRetries) {
+                    cerr << "[" << __func__ << "::" << getTime() << "] Task queue exceeded threshold for too long, continuing with execution." << endl;
                     break;
                 }
                 // Check every 0.5 seconds
